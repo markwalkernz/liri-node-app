@@ -1,4 +1,5 @@
 // coding boot camp week 10 homework
+// note: fileLog is a function that writes to a text file as well as console.log
 
 // initialise packages
 var fs = require("fs");
@@ -37,6 +38,17 @@ function whichProcess() {
 }; // end of whichProcess function
 
 
+// function to write to a log file as well as display on screen ===================================
+function fileLog(logText) {
+
+	var fileText = logText + "\r\n"
+
+	fs.appendFileSync("log.txt", fileText);
+
+	console.log(logText);
+};
+
+
 // my-tweets ======================================================================================
 
 function myTweets() {
@@ -58,7 +70,7 @@ function myTweets() {
 
 	  if (error) {
 	  	// error message
-	  	console.log(error);
+	  	fileLog(error);
 	  }
 
 	  else {
@@ -66,14 +78,14 @@ function myTweets() {
 	  	// display tweets on screen
 	  	var numTweets = tweets.length;
 
-	  	console.log("===== MY TWEETS =====")
-		console.log("Number of tweets found: " + numTweets);
+	  	fileLog("===== MY TWEETS =====")
+		fileLog("Number of tweets found: " + numTweets);
 	  	
 	  	for (var i = 0; i < numTweets; i++) {
-	    	console.log(tweets[i].created_at + ": " + tweets[i].text);
+	    	fileLog(tweets[i].created_at + ": " + tweets[i].text);
 	    };
 
-	    console.log("=== END OF TWEETS ===");
+	    fileLog("=== END OF TWEETS ===\r\n");
 
 	  }; // end else
 
@@ -99,7 +111,7 @@ function spotifyThisSong() {
 	spotify.search({ type: 'track', query: userString }, function(error, data) {
   		if (error) {
   			// error message
-    		console.log(error);
+    		fileLog(error);
   		}
 
   		else {
@@ -107,14 +119,14 @@ function spotifyThisSong() {
  			// display results on screen
 			var numTracks = data.tracks.items.length;
 
-			console.log("===== SPOTIFY =====");
-			console.log("Search Term: " + userString);
-			console.log("Number of tracks found: " + numTracks);
+			fileLog("===== SPOTIFY =====");
+			fileLog("Search Term: " + userString);
+			fileLog("Number of tracks found: " + numTracks);
 			
 			// loop through tracks
 			for (var i = 0; i < numTracks; i++) {
-				console.log("---------------")
-				console.log("Song Name: " + data.tracks.items[i].name);
+				fileLog("---------------")
+				fileLog("Song Name: " + data.tracks.items[i].name);
 
 				// loop through artists
 				var numArtists = data.tracks.items[i].artists.length;
@@ -123,13 +135,13 @@ function spotifyThisSong() {
 					var artistNames = artistNames + ", " + data.tracks.items[i].artists[j];
 				};
 
-				console.log("Artist(s): " + artistNames);
+				fileLog("Artist(s): " + artistNames);
 
-				console.log("Album: " + data.tracks.items[i].album.name);
-				console.log("Link: " + data.tracks.items[i].preview_url);
+				fileLog("Album: " + data.tracks.items[i].album.name);
+				fileLog("Link: " + data.tracks.items[i].preview_url);
 			};
 
-			console.log("===== END OF SEARCH =====");
+			fileLog("===== END OF SEARCH =====\r\n");
 
 		}; // end else
 
@@ -160,7 +172,7 @@ function movieThis() {
 
   		if (error) {
   			// error message
-    		console.log(error);
+    		fileLog(error);
   		}
 
   		else {
@@ -169,28 +181,30 @@ function movieThis() {
 			var objBody = JSON.parse(body);
 
 			// display results on screen
-			console.log("===== MOVIES =====");
-			console.log("Search Term: " + userString);
-			console.log("------------------")
-			console.log("Title: " + objBody.Title);
-			console.log("Year: " + objBody.Year);
+			fileLog("===== MOVIES =====");
+			fileLog("Search Term: " + userString);
+			fileLog("------------------")
+			fileLog("Title: " + objBody.Title);
+			fileLog("Year: " + objBody.Year);
 
 				// loop through ratings array to find specific entries
 				for (i in objBody.Ratings) {
 
 					if (objBody.Ratings[i].Source == "Internet Movie Database") {
-						console.log("Rating by IMDB: " + objBody.Ratings[i].Value);
+						fileLog("Rating by IMDB: " + objBody.Ratings[i].Value);
 					};
 
 					if (objBody.Ratings[i].Source == "Rotten Tomatoes") {
-						console.log("Rating by Rotten Tomatoes: " + objBody.Ratings[i].Value);
+						fileLog("Rating by Rotten Tomatoes: " + objBody.Ratings[i].Value);
 					};
 				}
 
-			console.log("Country: " + objBody.Country);
-			console.log("Language: " + objBody.Language);
-			console.log("Plot: " + objBody.Plot);
-			console.log("Actors: " + objBody.Actors);
+			fileLog("Country: " + objBody.Country);
+			fileLog("Language: " + objBody.Language);
+			fileLog("Plot: " + objBody.Plot);
+			fileLog("Actors: " + objBody.Actors);
+
+			fileLog("===== END OF SEARCH =====\r\n");
 
 		}; // end else
 
@@ -206,7 +220,7 @@ function doWhatItSays() {
 	fs.readFile("random.txt", "utf8", function(error, data) {
 
 		if (error) {
-			return console.log(error);
+			return fileLog(error);
 		}
 
 		else {
@@ -214,12 +228,12 @@ function doWhatItSays() {
 			// check if there is data in the user text file
 			if (data == "") {
 
-				console.log("There is no data in random.txt");
+				fileLog("There is no data in random.txt");
 			}	
 
 			else {
 
-				console.log("random.txt contained the following: " + data);
+				fileLog("random.txt contained the following: " + data);
 
 				// get user input from data then update userCommand and userString values
 				var dataArray = data.split(",");
