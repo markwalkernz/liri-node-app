@@ -1,6 +1,7 @@
 // coding boot camp week 10 homework
 
-// initialise npms
+// initialise packages
+var fs = require("fs");
 var request = require("request");
 var Twitter = require("twitter");
 var Spotify = require("node-spotify-api");
@@ -9,9 +10,36 @@ var Spotify = require("node-spotify-api");
 var userCommand = process.argv[2];
 var userString = process.argv[3];
 
+// determine which process to run
+function whichProcess() {
+	switch (userCommand) {
+		case "my-tweets":
+			myTweets();
+		break;
+
+		case "spotify-this-song":
+			spotifyThisSong();
+		break;
+
+		case "movie-this":
+			movieThis();
+		break;
+
+		case "do-what-it-says":
+			doWhatItSays();
+		break;
+
+		default:
+			userHelp();
+
+	}; // end of switch
+
+}; // end of whichProcess function
+
+
 // my-tweets ======================================================================================
 
-if(userCommand == "my-tweets") {
+function myTweets() {
 
 	// get twitter keys from keys.js
 	var twitterKeys = require("./keys.js");
@@ -51,10 +79,11 @@ if(userCommand == "my-tweets") {
 
 	}); // end of twitter function
 
-}; // end of my-tweets
+}; // end of myTweets
+
 
 // spotify-this-song ==============================================================================
-if(userCommand == "spotify-this-song") {
+function spotifyThisSong() {
 
 	// if there is no user input, use the string below as the default 
 	if(userString == undefined) {
@@ -70,7 +99,7 @@ if(userCommand == "spotify-this-song") {
 	spotify.search({ type: 'track', query: userString }, function(error, data) {
   		if (error) {
   			// error message
-    		return console.log(error);
+    		console.log(error);
   		}
 
   		else {
@@ -93,7 +122,7 @@ if(userCommand == "spotify-this-song") {
 				for (var j = 1; j < numArtists; j++) {
 					var artistNames = artistNames + ", " + data.tracks.items[i].artists[j];
 				};
-				
+
 				console.log("Artist(s): " + artistNames);
 
 				console.log("Album: " + data.tracks.items[i].album.name);
@@ -106,11 +135,11 @@ if(userCommand == "spotify-this-song") {
 
 	}); // end of spotify function
 		
-}; // end of spotify-this-song
+}; // end of spotifyThisSong
 
 
 // movie-this =====================================================================================
-if(userCommand == "movie-this") {
+function movieThis() {
 
 	// if there is no user input, use the string below as the default 
 	if(userString == undefined) {
@@ -129,32 +158,41 @@ if(userCommand == "movie-this") {
 
 	request(queryString, function(error,response,body) {
 
-		// convert the body string into an object
-		var objBody = JSON.parse(body);
+  		if (error) {
+  			// error message
+    		console.log(error);
+  		}
 
-		// display results on screen
-		console.log("===== MOVIES =====");
-		console.log("Search Term: " + userString);
-		console.log("------------------")
-		console.log("Title: " + objBody.Title);
-		console.log("Year: " + objBody.Year);
+  		else {
 
-			// loop through ratings array to find specific entries
-			for (i in objBody.Ratings) {
+			// convert the body string into an object
+			var objBody = JSON.parse(body);
 
-				if (objBody.Ratings[i].Source == "Internet Movie Database") {
-					console.log("Rating by IMDB: " + objBody.Ratings[i].Value);
-				};
+			// display results on screen
+			console.log("===== MOVIES =====");
+			console.log("Search Term: " + userString);
+			console.log("------------------")
+			console.log("Title: " + objBody.Title);
+			console.log("Year: " + objBody.Year);
 
-				if (objBody.Ratings[i].Source == "Rotten Tomatoes") {
-					console.log("Rating by Rotten Tomatoes: " + objBody.Ratings[i].Value);
-				};
-			}
+				// loop through ratings array to find specific entries
+				for (i in objBody.Ratings) {
 
-		console.log("Country: " + objBody.Country);
-		console.log("Language: " + objBody.Language);
-		console.log("Plot: " + objBody.Plot);
-		console.log("Actors: " + objBody.Actors);
+					if (objBody.Ratings[i].Source == "Internet Movie Database") {
+						console.log("Rating by IMDB: " + objBody.Ratings[i].Value);
+					};
+
+					if (objBody.Ratings[i].Source == "Rotten Tomatoes") {
+						console.log("Rating by Rotten Tomatoes: " + objBody.Ratings[i].Value);
+					};
+				}
+
+			console.log("Country: " + objBody.Country);
+			console.log("Language: " + objBody.Language);
+			console.log("Plot: " + objBody.Plot);
+			console.log("Actors: " + objBody.Actors);
+
+		}; // end else
 
 	}); // end of omdb request function
 
@@ -162,9 +200,57 @@ if(userCommand == "movie-this") {
 
 
 // do-what-it-says ===============================================================================
-if(userCommand == "do-what-it-says") {
+function doWhatItSays() {
 
-	console.log("selected do-what-it-says");
-	console.log("userInput " + userInput);
+	// read in data
+	fs.readFile("random.txt", "utf8", function(error, data) {
+
+		if (error) {
+			return console.log(error);
+		}
+
+		else {
+
+			// check if there is data in the user text file
+			if (data == "") {
+
+				console.log("There is no data in random.txt");
+			}	
+
+			else {
+
+				console.log("random.txt contained the following: " + data);
+
+				// get user input from data then update userCommand and userString values
+				var dataArray = data.split(",");
+
+				userCommand = dataArray[0];
+				userString = dataArray[1];
+
+				// call the whichProcess function, which will act based on userCommand and userString
+				whichProcess();
+
+			}; // end else
+
+		}; // end else
+
+	}); // end of readFile function
 
 }; // end of do-what-it-says
+
+
+// display info to help the user ===================================================================
+function userHelp () {
+
+			console.log("Sorry, I don't understand that command.");
+			console.log("Please use one of the following:")
+			console.log("1. node liri.js my-tweets");
+			console.log('2. node liri.js spotify-this-song "<search term>"');
+			console.log('3. node liri.js movie-this "<search term>"');
+			console.log("4. node liri.js do-what-it-says");
+
+}; // end of userHelp function
+
+
+// call the whichProcess function to begin =======================================================
+whichProcess();
