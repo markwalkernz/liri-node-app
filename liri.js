@@ -93,6 +93,7 @@ if(userCommand == "spotify-this-song") {
 				for (var j = 1; j < numArtists; j++) {
 					var artistNames = artistNames + ", " + data.tracks.items[i].artists[j];
 				};
+				
 				console.log("Artist(s): " + artistNames);
 
 				console.log("Album: " + data.tracks.items[i].album.name);
@@ -116,7 +117,7 @@ if(userCommand == "movie-this") {
 		userString = "Mr Nobody";
 	};
 
-	// create api query string 
+	// create api query string from first word of user input
 	var queryArray = userString.split(" ");
 	var queryLength = queryArray.length;
 	var queryString = "http://www.omdbapi.com/?apikey=40e9cece&t=" + queryArray[0];
@@ -126,24 +127,36 @@ if(userCommand == "movie-this") {
 		queryString = queryString + "+" + queryArray[i];
 	};
 
-	console.log(queryString);
-
 	request(queryString, function(error,response,body) {
 
+		// convert the body string into an object
+		var objBody = JSON.parse(body);
+
+		// display results on screen
 		console.log("===== MOVIES =====");
 		console.log("Search Term: " + userString);
-		console.log(body.Title);
+		console.log("------------------")
+		console.log("Title: " + objBody.Title);
+		console.log("Year: " + objBody.Year);
 
-	});
+			// loop through ratings array to find specific entries
+			for (i in objBody.Ratings) {
 
-       // * Title of the movie.
-       // * Year the movie came out.
-       // * IMDB Rating of the movie.
-       // * Rotten Tomatoes Rating of the movie.
-       // * Country where the movie was produced.
-       // * Language of the movie.
-       // * Plot of the movie.
-       // * Actors in the movie.
+				if (objBody.Ratings[i].Source == "Internet Movie Database") {
+					console.log("Rating by IMDB: " + objBody.Ratings[i].Value);
+				};
+
+				if (objBody.Ratings[i].Source == "Rotten Tomatoes") {
+					console.log("Rating by Rotten Tomatoes: " + objBody.Ratings[i].Value);
+				};
+			}
+
+		console.log("Country: " + objBody.Country);
+		console.log("Language: " + objBody.Language);
+		console.log("Plot: " + objBody.Plot);
+		console.log("Actors: " + objBody.Actors);
+
+	}); // end of omdb request function
 
 }; // end of movie-this
 
