@@ -1,5 +1,6 @@
 // coding boot camp week 10 homework
-// note: fileLog is a function that writes to a text file as well as console.log
+
+// NOTE: fileLog is a function that writes to a file (log.txt) as well as console.log
 
 // initialise packages
 var fs = require("fs");
@@ -85,7 +86,7 @@ function myTweets() {
 	    	fileLog(tweets[i].created_at + ": " + tweets[i].text);
 	    };
 
-	    fileLog("=== END OF TWEETS ===\r\n");
+	    fileLog("=== END OF TWEETS ===");
 
 	  }; // end else
 
@@ -119,7 +120,7 @@ function spotifyThisSong() {
  			// display results on screen
 			var numTracks = data.tracks.items.length;
 
-			fileLog("===== SPOTIFY =====");
+			fileLog("\r\n===== SPOTIFY =====");
 			fileLog("Search Term: " + userString);
 			fileLog("Number of tracks found: " + numTracks);
 			
@@ -181,7 +182,7 @@ function movieThis() {
 			var objBody = JSON.parse(body);
 
 			// display results on screen
-			fileLog("===== MOVIES =====");
+			fileLog("\r\n===== MOVIES =====");
 			fileLog("Search Term: " + userString);
 			fileLog("------------------")
 			fileLog("Title: " + objBody.Title);
@@ -204,7 +205,7 @@ function movieThis() {
 			fileLog("Plot: " + objBody.Plot);
 			fileLog("Actors: " + objBody.Actors);
 
-			fileLog("===== END OF SEARCH =====\r\n");
+			fileLog("===== END OF SEARCH =====");
 
 		}; // end else
 
@@ -228,12 +229,12 @@ function doWhatItSays() {
 			// check if there is data in the user text file
 			if (data == "") {
 
-				fileLog("There is no data in random.txt");
+				fileLog("\r\nThere is no data in random.txt\r\n");
 			}	
 
 			else {
 
-				fileLog("random.txt contained the following: " + data);
+				fileLog("\r\nrandom.txt contained the following: " + data + "\r\n");
 
 				// get user input from data then update userCommand and userString values
 				var dataArray = data.split(",");
@@ -256,12 +257,12 @@ function doWhatItSays() {
 // display info to help the user ===================================================================
 function userHelp () {
 
-			console.log("Sorry, I don't understand that command.");
+			console.log("\r\nSorry, I don't understand that command.");
 			console.log("Please use one of the following:")
 			console.log("1. node liri.js my-tweets");
 			console.log('2. node liri.js spotify-this-song "<search term>"');
 			console.log('3. node liri.js movie-this "<search term>"');
-			console.log("4. node liri.js do-what-it-says");
+			console.log("4. node liri.js do-what-it-says\r\n");
 
 }; // end of userHelp function
 
