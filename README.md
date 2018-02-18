@@ -1,2 +1,2 @@
 # liri-node-app
-Coding Boot Camp Week 10 homework. node.js.
+A node.js command line interface that interacts with APIs.
